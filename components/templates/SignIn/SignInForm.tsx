@@ -7,21 +7,11 @@ import FillButton from "../../UI/atoms/Buttons/FillButton";
 import { SignInButtonTitle } from "./constants";
 import { useRouter } from "next/router";
 import { AuthContext } from "../../../contexts/AuthContext";
-import { gql, useLazyQuery } from "@apollo/client";
-
-
-const QUERY_LOGIN = gql`
-  query SignInQuery($email: String!, $pwd: String!) {
-    signIn(email: $email, validator: PASSWORD, pwd:$pwd) {
-      email
-    }
-  }
-`;
+import { useSignInQueryLazyQuery } from "../../../graphql/generated/graphql";
 
 const SignInForm: NextPage = () => {
   
-    const [loginNow] = useLazyQuery(QUERY_LOGIN)
-    const [submitted, setSubmitted] = useState(false);
+    const [loginNow, {loading}] = useSignInQueryLazyQuery()
     const authContext = useContext(AuthContext);
     const router = useRouter()
     const formik = useFormik({
@@ -30,9 +20,7 @@ const SignInForm: NextPage = () => {
           password: '',
         },
         onSubmit: values => {
-          setSubmitted(true);
           loginNow({variables: {email: values.email, pwd: values.password}}).then(res => {
-            setSubmitted(false);
             if(res.error){
               alert(res.error.message)
             } else {
@@ -79,7 +67,7 @@ const SignInForm: NextPage = () => {
                 handleChange={formik.handleChange}
                 handleBlur={formik.handleBlur}
             />     
-            <FillButton disabled={!formik.isValid || submitted} type="submit" label={!submitted ? SignInButtonTitle : 'Loading...'} />
+            <FillButton disabled={!formik.isValid || loading} type="submit" label={!loading ? SignInButtonTitle : 'Loading...'} />
         </form >
     )
 };

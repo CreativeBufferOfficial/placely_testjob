@@ -1,5 +1,5 @@
 import React, { createContext } from "react";
-import { useRouter } from "next/router";
+import Cookies from "js-cookie";
 
 interface IauthState{
   token: string | null | undefined
@@ -18,7 +18,7 @@ const { Provider } = AuthContext;
 const AuthProvider = ({ children }: {children: React.ReactNode}) => {
   let getToken;
   if (typeof window !== 'undefined') {
-    getToken = localStorage.getItem("token")
+    getToken = Cookies.get('token');
   }
   const [authState, setAuthState] = React.useState({
    token: getToken,
@@ -26,7 +26,7 @@ const AuthProvider = ({ children }: {children: React.ReactNode}) => {
 
   const setUserAuthInfo = (token: string) => {
    if (typeof window !== 'undefined') {
-      localStorage.setItem("token", token);
+    Cookies.set("token", token);
    }
    setAuthState({
     token,
@@ -35,10 +35,10 @@ const AuthProvider = ({ children }: {children: React.ReactNode}) => {
 
  const removeUserInfo = () => {
   if (typeof window !== 'undefined') {
-     localStorage.removeItem("token");
+     Cookies.remove('token', { path: '' })
   }
   setAuthState({
-   token:null,
+   token: null,
   });
 };
 

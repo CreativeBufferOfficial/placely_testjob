@@ -18,6 +18,7 @@ export const InputGroupWrapper = styled.div`
     border-radius: 4px;
     background: #FFFFFF;
     width:100%;
+    color:#000;
     outline:none;
     padding:10px;
    }

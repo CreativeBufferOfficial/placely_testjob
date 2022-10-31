@@ -1,0 +1,7 @@
+  mutation SignUpMutation($email: String!, $pwd: String!) {
+    signUp(email: $email, validator: PASSWORD, pwd:$pwd) {
+      email
+      emailStatus
+      status
+    }
+  }

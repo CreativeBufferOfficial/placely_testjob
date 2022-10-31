@@ -7,21 +7,10 @@ import FillButton from "../../UI/atoms/Buttons/FillButton";
 import { SignUpButtonTitle } from "./constants";
 import { useRouter } from "next/router";
 import { AuthContext } from "../../../contexts/AuthContext";
-import { gql, useMutation } from "@apollo/client";
-
-const QUERY_LOGIN = gql`
-  mutation SIGN_UP($email: String!, $pwd: String!) {
-    signUp(email: $email, validator: PASSWORD, pwd:$pwd) {
-      email
-      emailStatus
-      status
-    }
-  }
-`;
+import { useSignUpMutationMutation } from "../../../graphql/generated/graphql";
 
 const SignUpForm: NextPage = () => {
-    const [SignUpNow] = useMutation(QUERY_LOGIN)
-    const [submitted, setSubmitted] = useState(false);
+    const [SignUpNow, {loading}] = useSignUpMutationMutation()
     const authContext = useContext(AuthContext);
 
     const router = useRouter()
@@ -31,9 +20,7 @@ const SignUpForm: NextPage = () => {
           password: '', 
         },
         onSubmit: values => {
-          setSubmitted(true);
           SignUpNow({variables: {email: values.email, pwd: values.password}}).then(res => {
-            setSubmitted(false);
             authContext?.setAuthState('yes')
             router.push('/dashboard')
           }).catch(err => {
@@ -77,7 +64,7 @@ const SignUpForm: NextPage = () => {
                 handleChange={formik.handleChange}
                 handleBlur={formik.handleBlur}
             />     
-            <FillButton disabled={!formik.isValid || submitted} type="submit" label={!submitted ? SignUpButtonTitle: 'Loading...'} />
+            <FillButton disabled={!formik.isValid || loading} type="submit" label={!loading ? SignUpButtonTitle: 'Loading...'} />
         </form >
     )
 };

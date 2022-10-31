@@ -1,0 +1,5 @@
+query SignInQuery($email: String!, $pwd: String!) {
+    signIn(email: $email, validator: PASSWORD, pwd:$pwd) {
+        email
+    }
+}
